@@ -28,6 +28,44 @@
     }
   </style>
   <body>
+    <script>
+      (function () {
+        function setAppSize() {
+          var doc = document.documentElement;
+          var width = doc.clientWidth || window.innerWidth || 0;
+          var height = doc.clientHeight || window.innerHeight || 0;
+          if (window.visualViewport) {
+            width = window.visualViewport.width;
+            height = window.visualViewport.height;
+          }
+          doc.style.setProperty("--app-width", width + "px");
+          doc.style.setProperty("--app-height", height + "px");
+        }
+
+        setAppSize();
+        window.addEventListener("resize", setAppSize);
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", setAppSize);
+        }
+        if (window.ResizeObserver) {
+          var ro = new ResizeObserver(setAppSize);
+          ro.observe(document.documentElement);
+        }
+
+        var params = new URLSearchParams(window.location.search);
+        var forceEmbedded =
+          params.has("embed") || params.get("embed") === "1" || params.get("embedded") === "1";
+        var isEmbedded = false;
+        try {
+          isEmbedded = window.self !== window.top;
+        } catch (e) {
+          isEmbedded = true;
+        }
+        if (forceEmbedded || isEmbedded) {
+          document.body.classList.add("embedded");
+        }
+      })();
+    </script>
     <div class="bg-glow"></div>
     <div class="page">
       <header class="header">

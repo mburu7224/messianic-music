@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   color-scheme: dark;
   --header-height: 120px;
   --player-bar-height: 84px;
@@ -25,12 +25,15 @@
 html,
 body {
   height: 100%;
+  min-height: 0;
+  width: 100%;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
-  height: 100vh;
+  height: var(--app-height, 100%);
+  max-height: 100%;
   overflow: hidden; /* disable global scroll */
 }
 
@@ -51,12 +54,40 @@ body {
      keep header untouched; use flex column so content can flex correctly */
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  height: 100vh;
+  gap: clamp(12px, 2vh, 18px);
+  height: 100%;
+  min-height: 0;
   width: 100%;
-  padding: 20px; /* keep existing page padding */
+  max-width: 100%;
+  max-height: 100%;
+  padding: clamp(12px, 2.2vw, 20px); /* keep existing page padding */
   position: relative;
   z-index: 1;
+}
+
+/* Embedded mode (when rendered inside another app/iframe) */
+body.embedded {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.embedded .page {
+  height: 100%;
+  min-height: 0;
+}
+
+body.embedded .content {
+  height: calc(100% - var(--header-height));
+  min-height: 0;
+}
+
+body.embedded .sidebar,
+body.embedded .lyrics-body,
+body.embedded .playlist-body {
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
 }
 
 /* (desktop sizes controlled by .page and .content rules below) */
@@ -298,7 +329,7 @@ button.ghost {
   /* make content take the remaining space below header */
   flex: 1 1 0;
   min-height: 0; /* allow children to shrink and enable internal scrolling */
-  height: calc(100vh - var(--header-height));
+  height: calc(100% - var(--header-height));
 }
 
 .sidebar {
@@ -527,7 +558,7 @@ player,
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 100%);
   /* Force an upper bound so overflow-y:auto can work reliably */
-  max-height: calc(100vh - 260px);
+  max-height: 100%;
   overflow-y: auto !important;
 }
 
@@ -764,12 +795,10 @@ player,
 
 
 @media (max-width: 1200px) {
-  /* keep three-column layout but allow internal horizontal scroll when viewport is narrow
-     do not change header rules here to preserve header behavior */
+  /* keep two-column layout and avoid phantom third column on smaller screens */
   .content {
-    grid-template-columns: 280px minmax(0, 1fr) 320px;
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
     gap: 16px;
-    overflow-x: auto; /* allow scrolling inside content area instead of stacking */
   }
 
   .sidebar {
@@ -793,8 +822,7 @@ player,
 
   /* Preserve three-column layout on narrower screens; enable horizontal scroll inside content */
   .content {
-    grid-template-columns: 280px minmax(0, 1fr) 320px;
-    overflow-x: auto;
+    grid-template-columns: minmax(220px, 240px) minmax(0, 1fr);
     gap: 12px;
   }
 }
@@ -913,7 +941,8 @@ player,
   .content {
     display: block;
     padding: 16px;
-    height: calc(100vh - 70px);
+    height: calc(100% - 70px);
+    min-height: 0;
     overflow-y: auto;
   }
 
@@ -973,7 +1002,7 @@ player,
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: calc(100vh - 200px);
+    max-height: calc(100% - 200px);
     overflow-y: auto;
   }
 
@@ -1017,7 +1046,7 @@ player,
     top: 0;
     left: 0;
     width: 280px;
-    height: 100vh;
+    height: 100%;
     background: var(--panel);
     z-index: 500;
     transform: translateX(-100%);
@@ -1100,7 +1129,7 @@ player,
   }
 
   .mobile-menu-content .sidebar-list li::before {
-    content: "•";
+    content: "�";
     position: absolute;
     left: 0;
     color: var(--accent);
@@ -1387,3 +1416,4 @@ player,
     display: none !important;
   }
 }
+
