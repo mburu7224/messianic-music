@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COGMERS Player</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    /* Mobile-only song overlay */
+    @media (max-width: 768px) {
+      #songOverlay.active {
+        display: flex !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+    }
+    @media (min-width: 769px) {
+      #songOverlay {
+        display: none !important;
+      }
+    }
+  </style>
+  <body>
+    <div class="bg-glow"></div>
+    <div class="page">
+      <header class="header">
+        <div class="hero-copy">
+          <p class="eyebrow">COGMERS</p>
+          <h1>Messianic Songs</h1>
+          <p class="sub">Immersive listening with synced lyrics.</p>
+        </div>
+        <div class="header-actions">
+          <div class="topbar">
+            <div class="brand-pill">
+              <span class="brand-mark">C</span>
+              <span class="brand-name">COGMERS</span>
+            </div>
+            <div class="search">
+              <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14m0-2a9 9 0 1 0 5.93 15.78l4.15 4.15 1.42-1.42-4.15-4.15A9 9 0 0 0 11 2z" />
+              </svg>
+              <input type="search" placeholder="Search songs, artists, collections" aria-label="Search songs" />
+            </div>
+            <div class="top-actions">
+              <div class="sleep-wrap">
+                <button class="icon-btn ghost icon-only" id="sleepMenuBtn" aria-label="Sleep timer menu">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="5" r="1.7" />
+                    <circle cx="12" cy="12" r="1.7" />
+                    <circle cx="12" cy="19" r="1.7" />
+                  </svg>
+                </button>
+              </div>
+              <button class="ghost mobile-only" id="mobileMenuBtn" onclick="document.getElementById('mobileMenuPanel').classList.add('active')">☰</button>
+              <button class="ghost">Library</button>
+              <button>Upgrade</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <aside class="sidebar">
+          <div class="sidebar-card">
+            <h3>Discover</h3>
+            <p class="sub">Browse categories built for deep listening.</p>
+            <div class="sidebar-tags">
+              <span>Morning Worship</span>
+              <span>Reflection</span>
+              <span>Scripture Songs</span>
+              <span>Shabbat</span>
+              <span>Acoustic</span>
+              <span>Choral</span>
+            </div>
+          </div>
+          <div class="sidebar-card">
+            <h3>Tips</h3>
+            <ul class="sidebar-list">
+              <li>Use the sleep timer for night devotion.</li>
+              <li>Tap a lyric line to follow the sync.</li>
+              <li>Saved audio appears instantly.</li>
+            </ul>
+          </div>
+        </aside>
+
+        <main class="layout">
+        <div class="center-stack">
+          <div class="center-tabs">
+            <span class="pill">Curated Worship</span>
+            <span class="pill">Live Lyrics</span>
+            <span class="pill">Community Mix</span>
+          </div>
+          <section class="player">
+            <div class="section-label">Song Preview</div>
+            <div class="player-top">
+              <div class="cover" id="cover"></div>
+              <div class="meta">
+                <span class="badge">Now Playing</span>
+                <h2 id="songTitle">Select a song</h2>
+                <p id="songArtist">—</p>
+                <div class="meta-chips">
+                  <span class="chip">Hi-Fi Lyrics</span>
+                  <span class="chip">Immersive Sync</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="lyrics-block">
+              <div class="lyrics-header">
+                <h3>Lyrics</h3>
+                <span id="lyricsStatus">No lyrics yet</span>
+              </div>
+              <div class="lyrics-body" id="lyricsBody" tabindex="0" aria-live="polite"></div>
+            </div>
+
+            <div class="player-bar">
+              <div class="progress">
+                <span id="currentTime">0:00</span>
+                <input type="range" id="seek" min="0" max="100" value="0" />
+                <span id="duration">0:00</span>
+              </div>
+              <div class="controls">
+                <button class="icon-btn" id="repeat" title="Repeat">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 7h10a4 4 0 0 1 0 8h-1v-2h1a2 2 0 0 0 0-4H7v3L3 8l4-4v3z" />
+                    <path d="M17 17H7a4 4 0 0 1 0-8h1v2H7a2 2 0 0 0 0 4h10v-3l4 4-4 4v-3z" />
+                  </svg>
+                </button>
+                <button class="icon-btn" id="prev" title="Previous">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6h2v12H6z" />
+                    <path d="M18 6v12l-8-6 8-6z" />
+                  </svg>
+                </button>
+                <button class="icon-btn primary" id="play" title="Play/Pause"></button>
+                <button class="icon-btn" id="next" title="Next">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16 6h2v12h-2z" />
+                    <path d="M6 6v12l8-6-8-6z" />
+                  </svg>
+                </button>
+                <div class="more">
+                  <button class="icon-btn" id="more" title="More">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="5" cy="12" r="1.5" />
+                      <circle cx="12" cy="12" r="1.5" />
+                      <circle cx="19" cy="12" r="1.5" />
+                    </svg>
+                  </button>
+                  <div class="more-menu" id="moreMenu">
+                    <div class="menu-item">
+                      <span>Sleep timer</span>
+                      <input type="number" id="menuSleep" min="1" placeholder="30" />
+                    </div>
+                    <button id="menuStartTimer" class="ghost">Start</button>
+                    <div class="menu-item">
+                      <span>Speed</span>
+                      <select id="playbackSpeed">
+                        <option value="0.75">0.75x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <audio id="audio"></audio>
+          </section>
+        </div>
+
+        <section class="playlist">
+          <div class="playlist-header">
+            <h3>Playlist</h3>
+            <span id="songCount">0 songs</span>
+          </div>
+          <div class="tabs">
+            <button class="tab active" data-filter="all">All Songs</button>
+            <button class="tab" data-filter="audio">Saved Audio</button>
+            <button class="tab" data-filter="lyrics">Lyrics</button>
+          </div>
+          <div class="playlist-body" id="playlistBody">
+            <div class="playlist-item" onclick="openSongOverlayDirect(0)">
+              <span class="song-num">1</span>
+              <div class="song-info">
+                <div class="song-title">SOMA ZEFANIA</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(1)">
+              <span class="song-num">2</span>
+              <div class="song-info">
+                <div class="song-title">YASHUA MASIHI ALIENDA</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(2)">
+              <span class="song-num">3</span>
+              <div class="song-info">
+                <div class="song-title">NINATAMANI</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(3)">
+              <span class="song-num">4</span>
+              <div class="song-info">
+                <div class="song-title">YAHSHUA MESSIAH BWANA WETU</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(4)">
+              <span class="song-num">5</span>
+              <div class="song-info">
+                <div class="song-title">SIKU MOJA</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(5)">
+              <span class="song-num">6</span>
+              <div class="song-info">
+                <div class="song-title">MAISHA YANGU YOTE</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(6)">
+              <span class="song-num">7</span>
+              <div class="song-info">
+                <div class="song-title">KITABU CHA ISAIA</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(7)">
+              <span class="song-num">8</span>
+              <div class="song-info">
+                <div class="song-title">PAULO ALIYETUMWA</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(8)">
+              <span class="song-num">9</span>
+              <div class="song-info">
+                <div class="song-title">TUSOMENI ZABURI</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+            <div class="playlist-item" onclick="openSongOverlayDirect(9)">
+              <span class="song-num">10</span>
+              <div class="song-info">
+                <div class="song-title">ZABURI HAMSINI NA MOJA</div>
+                <div class="song-meta">COGMERS</div>
+              </div>
+              <span class="song-duration">--:--</span>
+            </div>
+          </div>
+        </section>
+        </main>
+      </div>
+
+      <!-- Mobile Menu Panel -->
+      <div class="mobile-menu-panel" id="mobileMenuPanel">
+        <div class="mobile-menu-header">
+          <span>Menu</span>
+          <button class="mobile-menu-close" id="mobileMenuClose" onclick="document.getElementById('mobileMenuPanel').classList.remove('active')">×</button>
+        </div>
+        <div class="mobile-menu-content">
+          <div class="sidebar-card">
+            <h3>Discover</h3>
+            <p class="sub">Browse categories built for deep listening.</p>
+            <div class="sidebar-tags">
+              <span>Morning Worship</span>
+              <span>Reflection</span>
+              <span>Scripture Songs</span>
+              <span>Shabbat</span>
+              <span>Acoustic</span>
+              <span>Choral</span>
+            </div>
+          </div>
+          <div class="sidebar-card">
+            <h3>Tips</h3>
+            <ul class="sidebar-list">
+              <li>Use the sleep timer for night devotion.</li>
+              <li>Tap a lyric line to follow the sync.</li>
+              <li>Saved audio appears instantly.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+      <!-- Song Overlay (Mobile) -->
+      <div class="song-overlay" id="songOverlay">
+        <div class="song-overlay-header">
+          <button class="song-overlay-close" id="songOverlayClose" onclick="document.getElementById('songOverlay').classList.remove('active')">×</button>
+          <div class="song-overlay-meta">
+            <span class="badge">Now Playing</span>
+            <h2 id="overlaySongTitle">Song Title</h2>
+            <p id="overlaySongArtist">Artist</p>
+          </div>
+        </div>
+        <div class="song-overlay-lyrics" id="overlayLyrics">
+          <!-- Lyrics will be populated here -->
+        </div>
+        <div class="song-overlay-controls">
+          <div class="progress">
+            <span id="overlayCurrentTime">0:00</span>
+            <input type="range" id="overlaySeek" min="0" max="100" value="0" />
+            <span id="overlayDuration">0:00</span>
+          </div>
+          <div class="controls">
+            <button class="icon-btn" id="overlayRepeat" title="Repeat">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M7 7h10a4 4 0 0 1 0 8h-1v-2h1a2 2 0 0 0 0-4H7v3L3 8l4-4v3zM17 17H7a4 4 0 0 1 0-8h1v2H7a2 2 0 0 0 0 4h10v-3l4 4-4 4v-3z"/></svg>
+            </button>
+            <button class="icon-btn" id="overlayPrev" title="Previous">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zM18 6v12l-8-6 8-6z"/></svg>
+            </button>
+            <button class="icon-btn primary" id="overlayPlay" title="Play/Pause">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"/></svg>
+            </button>
+            <button class="icon-btn" id="overlayNext" title="Next">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 6v12l8-6-8-6z"/></svg>
+            </button>
+            <button class="icon-btn" id="overlayMore" title="More">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+            </button>
+          </div>
+        </div>
+        <audio id="overlayAudio"></audio>
+      </div>
+
+      
+    </div>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <div class="brand-pill">
+        <span class="brand-mark">C</span>
+        <span class="brand-name">COGMERS</span>
+      </div>
+      <button class="search-toggle" id="mobileSearchToggle">
+        <svg viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14m0-2a9 9 0 1 0 5.93 15.78l4.15 4.15 1.42-1.42-4.15-4.15A9 9 0 0 0 11 2z"/></svg>
+      </button>
+    </header>
+
+    <!-- Mobile Search Overlay -->
+    <div class="mobile-search" id="mobileSearch">
+      <button class="mobile-search-close" id="mobileSearchClose">×</button>
+      <input type="search" id="mobileSearchInput" placeholder="Search songs..." />
+      <div class="mobile-search-results" id="mobileSearchResults"></div>
+    </div>
+
+    <!-- Mobile Main Content -->
+    <div class="mobile-main" id="mobileMain">
+      <section class="mobile-now-playing-section">
+        <div class="mobile-now-playing" id="mobileNowPlaying">
+          <div class="cover" id="mobileCover"></div>
+          <div class="meta">
+            <span class="badge">Now Playing</span>
+            <h2 id="mobileSongTitle">Select a song</h2>
+            <p id="mobileSongArtist">—</p>
+          </div>
+          <button class="play-btn" id="mobileMiniPlay">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="mobile-categories-section">
+        <div class="mobile-categories" id="mobileCategories">
+          <span class="mobile-category active" data-category="all">All</span>
+          <span class="mobile-category" data-category="morning">Morning Worship</span>
+          <span class="mobile-category" data-category="shabbat">Shabbat</span>
+          <span class="mobile-category" data-category="reflection">Reflection</span>
+          <span class="mobile-category" data-category="scripture">Scripture</span>
+        </div>
+      </section>
+
+      <section class="mobile-songs-section">
+        <h3 class="mobile-section-title">Songs</h3>
+        <div class="mobile-song-list" id="mobileSongList"></div>
+      </section>
+    </div>
+
+    <!-- Mobile Mini Player -->
+    <div class="mobile-mini-player" id="mobileMiniPlayer">
+      <div class="cover" id="miniCover"></div>
+      <div class="meta">
+        <h3 id="miniTitle">Select a song</h3>
+        <p id="miniArtist">—</p>
+      </div>
+      <button class="play-btn" id="miniPlayBtn">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"/></svg>
+      </button>
+    </div>
+
+    <!-- Mobile Full Player -->
+    <div class="mobile-player" id="mobilePlayer">
+      <div class="mobile-player-header">
+        <button class="mobile-player-close" id="mobilePlayerClose">×</button>
+        <span class="mobile-player-title">Now Playing</span>
+        <button class="mobile-player-menu">⋮</button>
+      </div>
+      <div class="mobile-player-cover" id="mobilePlayerCover"></div>
+      <div class="mobile-player-meta">
+        <h1 id="mobilePlayerTitle">Select a song</h1>
+        <p id="mobilePlayerArtist">—</p>
+      </div>
+      <div class="mobile-player-lyrics" id="mobilePlayerLyrics"></div>
+      <div class="mobile-player-controls">
+        <div class="mobile-player-progress">
+          <span id="mobileCurrentTime">0:00</span>
+          <input type="range" id="mobileSeek" min="0" max="100" value="0" />
+          <span id="mobileDuration">0:00</span>
+        </div>
+        <div class="mobile-player-buttons">
+          <button class="icon-btn" id="mobileRepeat">
+            <svg viewBox="0 0 24 24"><path d="M7 7h10a4 4 0 0 1 0 8h-1v-2h1a2 2 0 0 0 0-4H7v3L3 8l4-4v3zM17 17H7a4 4 0 0 1 0-8h1v2H7a2 2 0 0 0 0 4h10v-3l4 4-4 4v-3z"/></svg>
+          </button>
+          <button class="icon-btn" id="mobilePrev">
+            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zM18 6v12l-8-6 8-6z"/></svg>
+          </button>
+          <button class="icon-btn primary" id="mobilePlay">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"/></svg>
+          </button>
+          <button class="icon-btn" id="mobileNext">
+            <svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 6v12l8-6-8-6z"/></svg>
+          </button>
+          <button class="icon-btn" id="mobileShuffle">
+            <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+          </button>
+        </div>
+      </div>
+      <audio id="mobileAudio"></audio>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+      <button class="mobile-nav-item active" data-nav="home">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="mobile-nav-item" data-nav="search">
+        <svg viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 1 0 14a7 7 0 0 1 0-14m0-2a9 9 0 1 0 5.93 15.78l4.15 4.15 1.42-1.42-4.15-4.15A9 9 0 0 0 11 2z"/></svg>
+        <span>Search</span>
+      </button>
+      <button class="mobile-nav-item" data-nav="library">
+        <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"/></svg>
+        <span>Library</span>
+      </button>
+      <button class="mobile-nav-item" data-nav="favorites">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span>Favorites</span>
+      </button>
+    </nav>
+
+    <div class="sleep-menu" id="sleepMenu">
+      <div class="sleep-overlay" data-sleep-close="true"></div>
+      <div class="sleep-panel">
+        <label>
+          Sleep timer (minutes)
+          <input type="number" id="sleepMinutes" min="1" placeholder="30" />
+        </label>
+        <button id="startTimer">Start Timer</button>
+        <button id="clearTimer" class="ghost">Clear</button>
+        <div class="timer" id="timerStatus">Timer off</div>
+      </div>
+    </div>
+
+    <script type="module" src="player.js"></script>
+    <script type="module" src="mobile.js"></script>
+    <script>
+      // Simple function to show song overlay - works without module loading
+      var songs = [
+        { no: 1, title: "SOMA ZEFANIA", artist: "COGMERS" },
+        { no: 2, title: "YASHUA MASIHI ALIENDA", artist: "COGMERS" },
+        { no: 3, title: "NINATAMANI", artist: "COGMERS" },
+        { no: 4, title: "YAHSHUA MESSIAH BWANA WETU", artist: "COGMERS" },
+        { no: 5, title: "SIKU MOJA", artist: "COGMERS" },
+        { no: 6, title: "MAISHA YANGU YOTE", artist: "COGMERS" },
+        { no: 7, title: "KITABU CHA ISAIA", artist: "COGMERS" },
+        { no: 8, title: "PAULO ALIYETUMWA", artist: "COGMERS" },
+        { no: 9, title: "TUSOMENI ZABURI", artist: "COGMERS" },
+        { no: 10, title: "ZABURI HAMSINI NA MOJA", artist: "COGMERS" }
+      ];
+      
+      function showSongOverlay(index) {
+        var song = songs[index];
+        var overlay = document.getElementById('songOverlay');
+        var titleEl = document.getElementById('overlaySongTitle');
+        var artistEl = document.getElementById('overlaySongArtist');
+        
+        if (song && overlay) {
+          if (titleEl) titleEl.textContent = song.title;
+          if (artistEl) artistEl.textContent = song.artist;
+          overlay.classList.add('active');
+        }
+      }
+    </script>
+  </body>
+</html>
